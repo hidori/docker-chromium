@@ -1,7 +1,13 @@
-FROM node:12.18.3-alpine3.12
+ARG NODE_VERSION
+ARG ALPINE_VERSION
 
-RUN apk update \
-    && apk add --no-cache \
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
+
+ARG CHROMIUM_VERSION
+
+RUN npm i -g npm
+
+RUN apk update && apk add --no-cache \
     ca-certificates \
     nss \
     freetype \
@@ -10,11 +16,17 @@ RUN apk update \
     ttf-freefont \
     tzdata \
     fontconfig \
-    font-noto-cjk \
-    && cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
+    font-noto-cjk
+
+RUN cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
     && echo "Asia/Tokyo" > /etc/timezone \
     && apk del tzdata \
     && fc-cache -fv
 
 RUN apk add --no-cache \
-    chromium=83.0.4103.116-r0
+    chromium=${CHROMIUM_VERSION}
+
+RUN addgroup -S user \
+    && adduser -S -g user user \
+    && mkdir -p /home/user/Downloads \
+    && chown -R user:user /home/user
