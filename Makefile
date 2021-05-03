@@ -20,4 +20,5 @@ run:
 
 .PHONY: push
 push:
+	docker tag $(IMAGE_NAME):$(IMAGE_TAG) $(IMAGE_NAME):latest
 	docker push -a $(IMAGE_NAME)
